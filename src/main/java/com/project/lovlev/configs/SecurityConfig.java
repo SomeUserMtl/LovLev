@@ -1,13 +1,16 @@
 package com.project.lovlev.configs;
 
+import com.project.lovlev.services.JpaUserDetailService;
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,38 +19,44 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-//    private final JpaUserDetailsService jpaUserDetailsService;
+    private final JpaUserDetailService jpaUserDetailService;
 //
-//    public SecurityConfig(JpaUserDetailsService jpaUserDetailsService) {
-//        this.jpaUserDetailsService = jpaUserDetailsService;
-//    }
+    public SecurityConfig(JpaUserDetailService jpaUserDetailService) {
+        this.jpaUserDetailService = jpaUserDetailService;
+    }
 
 //    @Bean
 //    public InMemoryUserDetailsManager user(){
+//        System.out.println(passwordEncoder().encode("user"));
 //        return new InMemoryUserDetailsManager(
 //                User.withUsername("user")
-//                        .password("user")
+//                        .password(passwordEncoder().encode("user"))
 //                        .authorities("read")
 //                        .build()
 //        );
 //    }
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/partners/**").permitAll()
+//                        .mvcMatchers("/partners/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
+                .userDetailsService(jpaUserDetailService)
                 .build();
     }
-//    @Bean
-//    PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        System.out.println("passwordEncoder: " + bCryptPasswordEncoder);
+        return new BCryptPasswordEncoder();
+    }
 }

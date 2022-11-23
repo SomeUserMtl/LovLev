@@ -19,8 +19,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     User findByUsernameAndPassword(String username, String password);
 
     //find by username
-    @Query("SELECT u FROM user u WHERE u.username = :username")
-    User findUserByUsername(@Param("username") String username) throws UsernameNotFoundException;
+    @Query("SELECT u FROM users u WHERE u.username = :username")
+    Optional<User> findUserByUsername(String username) throws UsernameNotFoundException;
 
     //add user record to user table
     User save(User user);

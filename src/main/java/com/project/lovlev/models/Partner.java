@@ -37,7 +37,7 @@ public class Partner{
 
 //    @Column(name = "sex")
 //    @Convert(converter = SexConverter.class)
-//    private Sex sex;
+//    private Integer sex;
 
 //    @ManyToOne(fetch = FetchType.EAGER)
     private Long user;

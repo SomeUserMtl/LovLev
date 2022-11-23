@@ -2,13 +2,12 @@ package com.project.lovlev.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Entity(name = "user")
+@Entity(name = "users")
 public class User {
     @Id
     @Column(name = "id")
@@ -33,10 +32,15 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    private String role;
+    @Column(name = "roles")
+    private String roles;
+
+//    @Column(name = "sex")
+//    @Convert(converter = SexConverter.class)
+//    private Integer sex;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Partner> partners = new ArrayList<>();
 
     @Override
@@ -49,7 +53,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", role='" + roles + '\'' +
                 ", partners=" + partners +
                 '}';
     }

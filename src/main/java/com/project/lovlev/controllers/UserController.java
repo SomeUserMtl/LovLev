@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,13 +15,14 @@ import java.util.Optional;
 
 @Data
 @RestController
+@EnableMethodSecurity
 public class UserController {
     UserRepository userRepository;
-//    PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("user")
@@ -33,6 +35,7 @@ public class UserController {
     }
 
     //findall users
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("users")
     public ResponseEntity<Iterable<User>> getAllUsers() {
         Iterable<User> users = userRepository.findAll();
@@ -40,11 +43,12 @@ public class UserController {
     }
 
     // Create user
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(path = "user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> save(@RequestBody User newUser) throws Exception {
-//        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         User user = userRepository.save(newUser);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
