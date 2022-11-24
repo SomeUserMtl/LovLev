@@ -1,7 +1,6 @@
 package com.project.lovlev.models;
 
 import com.project.lovlev.enums.Sex;
-import com.project.lovlev.enums.SexConverter;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -35,9 +34,8 @@ public class Partner{
     @Column(name = "eye_color")
     private String eyeColor;
 
-//    @Column(name = "sex")
-//    @Convert(converter = SexConverter.class)
-//    private Integer sex;
+    @Enumerated(EnumType.ORDINAL)
+    private Sex sex;
 
 //    @ManyToOne(fetch = FetchType.EAGER)
     private Long user;

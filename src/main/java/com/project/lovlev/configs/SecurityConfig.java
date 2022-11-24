@@ -28,6 +28,8 @@ public class SecurityConfig {
         this.jpaUserDetailService = jpaUserDetailService;
     }
 
+    //Hardcoded for development purposes
+
 //    @Bean
 //    public InMemoryUserDetailsManager user(){
 //        System.out.println(passwordEncoder().encode("user"));

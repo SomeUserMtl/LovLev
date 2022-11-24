@@ -1,6 +1,7 @@
 package com.project.lovlev.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.lovlev.enums.Sex;
 import lombok.Data;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,26 +36,10 @@ public class User {
     @Column(name = "roles")
     private String roles;
 
-//    @Column(name = "sex")
-//    @Convert(converter = SexConverter.class)
-//    private Integer sex;
+    @Enumerated(EnumType.ORDINAL)
+    private Sex sex;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Partner> partners = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + roles + '\'' +
-                ", partners=" + partners +
-                '}';
-    }
 }
