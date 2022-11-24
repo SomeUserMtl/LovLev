@@ -1,6 +1,5 @@
 package com.project.lovlev.controllers;
 
-import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
 import com.project.lovlev.services.CustomValidators;
@@ -13,8 +12,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @Data
 @RestController
