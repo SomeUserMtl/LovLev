@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +49,7 @@ public class UserController {
     @PostMapping(path = "user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> save(@RequestBody User newUser) throws Exception {
+    public ResponseEntity<User> save(@RequestBody @Valid User newUser) throws Exception {
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         User user = userRepository.save(newUser);
         return new ResponseEntity<>(user, HttpStatus.CREATED);

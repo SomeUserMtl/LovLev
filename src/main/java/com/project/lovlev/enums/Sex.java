@@ -1,5 +1,7 @@
 package com.project.lovlev.enums;
 
-public enum Sex {
+import java.io.Serializable;
+
+public enum Sex implements Serializable {
     Male, Female, Other
 }

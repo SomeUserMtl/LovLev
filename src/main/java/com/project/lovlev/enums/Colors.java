@@ -1,5 +1,7 @@
 package com.project.lovlev.enums;
 
-public enum Colors {
+import java.io.Serializable;
+
+public enum Colors implements Serializable {
     Blue, Green, Brown, Black
 }
