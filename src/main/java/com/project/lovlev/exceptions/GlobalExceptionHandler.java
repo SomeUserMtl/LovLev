@@ -5,11 +5,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleValidationErrors(IllegalArgumentException ex) {
+        String error = ex.getMessage();
+        return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleValidationErrors(HttpMessageNotReadableException ex) {
         String error = ex.getMessage();
         return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
