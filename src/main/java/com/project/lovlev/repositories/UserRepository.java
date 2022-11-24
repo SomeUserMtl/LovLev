@@ -26,6 +26,7 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     Optional<User> findUserByUsername(String username) throws UsernameNotFoundException;
 
     //add user record to user table
+    @Transactional
     User save(User user);
 
     //find all users
