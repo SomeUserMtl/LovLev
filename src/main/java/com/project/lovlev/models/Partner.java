@@ -1,5 +1,6 @@
 package com.project.lovlev.models;
 
+import com.project.lovlev.enums.Colors;
 import com.project.lovlev.enums.Sex;
 import lombok.Data;
 
@@ -22,21 +23,30 @@ public class Partner{
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "nickname")
+    private String nickname;
+
     @Column(name = "age")
     private int age;
 
-    @Column(name = "height")
-    private String height;
+    @Column(name = "height_feet")
+    private int heightFeet;
+
+    @Column(name = "height_inches")
+    private int heightInches;
 
     @Column(name = "hair_color")
-    private String hairColor;
+    @Enumerated(EnumType.ORDINAL)
+    private Colors hairColor;
 
     @Column(name = "eye_color")
-    private String eyeColor;
+    @JoinColumn(name="user_id", nullable=false)
+    @Enumerated(EnumType.ORDINAL)
+    private Colors eyeColor;
 
     @Enumerated(EnumType.ORDINAL)
     private Sex sex;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-    private Long user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
 }

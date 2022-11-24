@@ -25,16 +25,16 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("user")
-    public ResponseEntity<User> getById(@RequestParam String username,
-                                        @RequestParam String password) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByUsernameAndPassword(username,password));
+    public ResponseEntity<User> getById(@RequestParam Long id) {
+        Optional<User> user = Optional.ofNullable(userRepository.getById(id));
         return user.map(value
                 -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
                 -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    //findall users
+    //find all users
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("users")
     public ResponseEntity<Iterable<User>> getAllUsers() {

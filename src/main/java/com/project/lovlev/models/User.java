@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.lovlev.enums.Sex;
 import lombok.Data;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity(name = "users")
@@ -36,10 +36,11 @@ public class User {
     @Column(name = "roles")
     private String roles;
 
+    @Column(name = "sex")
     @Enumerated(EnumType.ORDINAL)
     private Sex sex;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Partner> partners = new ArrayList<>();
+    private Set<Partner> partners = new HashSet<>();
 }
