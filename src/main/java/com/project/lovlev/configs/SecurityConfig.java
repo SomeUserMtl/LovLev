@@ -1,15 +1,20 @@
 package com.project.lovlev.configs;
 
-import com.project.lovlev.models.services.JpaUserDetailService;
+import com.project.lovlev.models.SecurityUser;
+import com.project.lovlev.services.JpaUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -56,4 +61,9 @@ public class SecurityConfig {
         System.out.println("passwordEncoder: " + bCryptPasswordEncoder);
         return new BCryptPasswordEncoder();
     }
+
+//    @Bean
+//    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+//        return new SecurityEvaluationContextExtension();
+//    }
 }

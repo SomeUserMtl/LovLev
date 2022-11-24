@@ -1,8 +1,9 @@
 package com.project.lovlev.controllers;
 
+import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
-import com.project.lovlev.models.services.CustomValidators;
+import com.project.lovlev.services.CustomValidators;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,14 +35,15 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("user")
     public ResponseEntity<User> getById(@RequestParam Long id) {
-        Optional<User> user = Optional.ofNullable(userRepository.getById(id));
+        Optional<User> user = Optional
+                .ofNullable(userRepository.getById(id));
         return user.map(value
                 -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
                 -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     //find all users
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("users")
     public ResponseEntity<Iterable<User>> getAllUsers() {
         Iterable<User> users = userRepository.findAll();
@@ -63,6 +65,7 @@ public class UserController {
     }
 
     //delete user
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("user")
     public ResponseEntity<User> delete(@RequestParam Long id) {
         userRepository.deleteById(id);
@@ -70,6 +73,7 @@ public class UserController {
     }
 
     //delete multiple users
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("users")
     public ResponseEntity<User> deleteAll(@RequestParam Long[] id) {
         userRepository.deleteAllByIdIn(List.of(id));

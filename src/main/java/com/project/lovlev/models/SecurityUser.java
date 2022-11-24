@@ -16,6 +16,10 @@ public class SecurityUser implements UserDetails {
         this.user = user;
     }
 
+    public Long getCurrentUserId(){
+        return user.getId();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.stream(user

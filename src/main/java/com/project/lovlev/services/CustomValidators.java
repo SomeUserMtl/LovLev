@@ -1,4 +1,4 @@
-package com.project.lovlev.models.services;
+package com.project.lovlev.services;
 
 import com.project.lovlev.enums.Sex;
 import lombok.Data;
