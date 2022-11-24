@@ -17,15 +17,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Pattern(regexp = "^[a-zA-Z\s]{0,20}$", message = "First name can only contain letters, numbers and spaces")
+    @Pattern(regexp = "^[a-zA-Z\s]{0,20}$", message = "First name can only contain letters or spaces")
     @Column(name = "first_name")
     private String firstName;
 
-//    @Pattern(regexp = "^[a-zA-Z\s]{0,20}$", message = "Middle name can only contain letters, numbers and spaces")
+    @Pattern(regexp = "^[a-zA-Z\s]{0,20}$", message = "Middle name can only contain letters or spaces")
     @Column(name = "middle_name")
     private String middleName;
 
-//    @Pattern(regexp = "^[a-zA-Z\s]{0,20}$", message = "last name can only contain letters, numbers and spaces")
+    @Pattern(regexp = "^[a-zA-Z\s]{0,20}$", message = "last name can only contain letters or spaces")
     @Column(name = "last_name")
     private String lastName;
 
