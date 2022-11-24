@@ -32,24 +32,6 @@ public class UserController {
         this.customValidators = customValidators;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("user")
-    public ResponseEntity<User> getById(@RequestParam Long id) {
-        Optional<User> user = Optional
-                .ofNullable(userRepository.getById(id));
-        return user.map(value
-                -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
-                -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    //find all users
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("users")
-    public ResponseEntity<Iterable<User>> getAllUsers() {
-        Iterable<User> users = userRepository.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-
     // Create user
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping(path = "user",
@@ -64,21 +46,13 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    //delete user
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // Delete user
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @DeleteMapping("user")
     public ResponseEntity<User> delete(@RequestParam Long id) {
         userRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //delete multiple users
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("users")
-    public ResponseEntity<User> deleteAll(@RequestParam Long[] id) {
-        userRepository.deleteAllByIdIn(List.of(id));
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    // validate password
+    // Update User
 }
