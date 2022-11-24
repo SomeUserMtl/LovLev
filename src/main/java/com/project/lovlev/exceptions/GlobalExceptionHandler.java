@@ -1,7 +1,7 @@
 package com.project.lovlev.exceptions;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +28,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleValidationErrors(ConstraintViolationException ex) {
         String error = ex.getCause().getMessage();
+        return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<String> handleValidationErrors(InvalidFormatException ex) {
+        String error = ex.getMessage();
+        return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleValidationErrors(IllegalArgumentException ex) {
+        String error = ex.getMessage();
         return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 

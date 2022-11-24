@@ -3,6 +3,7 @@ package com.project.lovlev.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.lovlev.enums.Sex;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -32,17 +33,14 @@ public class User {
 
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email is required")
-//    @Pattern(regexp = "^{5,30}$", message = "Email should be valid")
+    @Length(max = 50, message = "Email can't be longer than 50 characters")
     @Column(name = "email", unique = true)
     private String email;
 
-    @Pattern(regexp = "^[a-zA-Z0-9]{3,15}$",
-            message = "Username can only contain letters, numbers and must be between 4-8 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9]{3,15}$", message = "Username can only contain letters, numbers and must be between 4-8 characters")
     @Column(name = "username",unique = true)
     private String username;
 
-//    @Min(value = 4, message = "password must be between 4-20 characters, no spaces allowed")
-//    @Max(value = 20, message = "password must be between 4-20 characters, no spaces allowed")
     @Column(name = "password")
     private String password;
 

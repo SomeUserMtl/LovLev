@@ -1,6 +1,6 @@
 package com.project.lovlev.configs;
 
-import com.project.lovlev.services.JpaUserDetailService;
+import com.project.lovlev.models.services.JpaUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;

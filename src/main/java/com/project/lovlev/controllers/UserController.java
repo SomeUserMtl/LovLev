@@ -2,6 +2,7 @@ package com.project.lovlev.controllers;
 
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
+import com.project.lovlev.models.services.CustomValidators;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +21,14 @@ import java.util.Optional;
 public class UserController {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    CustomValidators customValidators;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userRepository,
+                          PasswordEncoder passwordEncoder,
+                          CustomValidators customValidators) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.customValidators = customValidators;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -50,6 +54,9 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> save(@RequestBody @Valid User newUser) throws Exception {
+
+        customValidators.validatePassword(newUser.getPassword());
+
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         User user = userRepository.save(newUser);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
@@ -68,4 +75,6 @@ public class UserController {
         userRepository.deleteAllByIdIn(List.of(id));
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    // validate password
 }
