@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Data
 @RestController
+@EnableMethodSecurity
 public class PartnerController {
     PartnerRepository partnerRepository;
     UserRepository userRepository;
@@ -29,21 +31,26 @@ public class PartnerController {
     }
 
     // Get partner by partnerId
-    @PreAuthorize("hasRole('ROLE_ADMIN, ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "partner")
-    public ResponseEntity<Partner> getById(@RequestParam Long id){
+    public ResponseEntity<Partner> getById(@RequestParam Long id, Authentication authentication) {
+
+        SecurityUser userPrincipal = (SecurityUser) authentication.getPrincipal();
+
+
         Optional<Partner> partner = Optional
                         .ofNullable(partnerRepository
-                        .getById(id));
+                        .getByIdAndUser(id,userPrincipal.getCurrentUserId()));
 
         return partner.map(value
                 -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
                 -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN, ROLE_USER')")
+    //authorize both role_admin and role_user
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("partners")
-    public ResponseEntity<Iterable<Partner>> getAllUsers(Authentication authentication) {
+    public ResponseEntity<Iterable<Partner>> findAllPartners(Authentication authentication) {
 
         SecurityUser userPrincipal = (SecurityUser) authentication.getPrincipal();
         Iterable<Partner> partners = partnerRepository.findAll(userPrincipal.getCurrentUserId());
@@ -51,6 +58,7 @@ public class PartnerController {
     }
 
     // Add a new partner
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping(path = "partner",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
