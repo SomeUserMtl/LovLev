@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.lovlev.enums.Sex;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.HashSet;
@@ -54,4 +56,10 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Partner> partners = new HashSet<>();
+
+    // Only allow admin to set roles
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
 }
