@@ -13,7 +13,8 @@ import java.util.List;
 public interface PartnerRepository extends CrudRepository<Partner, Integer> {
 
     //get partner using id
-    Partner getById(Long id);
+    @Query("SELECT p FROM partner p WHERE p.id = :id AND p.user.id = :userId")
+    Partner getByIdAndUser(Long id, Long userId);
 
     //get list of all partners
     @Query("SELECT p FROM partner p WHERE p.user.id = :id")
