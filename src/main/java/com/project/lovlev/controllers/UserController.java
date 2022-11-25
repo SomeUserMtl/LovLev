@@ -48,7 +48,7 @@ public class UserController {
                 .getAuthorities()
                 .stream()
                 .map(Object::toString)
-                .noneMatch(s -> s.contains("ROLE_ADMIN"))) {
+                .noneMatch(s -> s.equals("ROLE_ADMIN"))) {
             throw new IllegalArgumentException("You are not authorized to add roles");
         }
 
