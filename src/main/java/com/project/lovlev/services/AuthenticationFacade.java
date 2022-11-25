@@ -1,5 +1,6 @@
 package com.project.lovlev.services;
 
+import com.project.lovlev.models.SecurityUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,13 @@ public class AuthenticationFacade implements IAuthenticationFacade {
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch(s -> s.equals(role));
+                .noneMatch(s -> s.equals(role));
     }
+
+    @Override
+    public Long getUserId() {
+        SecurityUser securityUser = (SecurityUser) getAuthentication().getPrincipal();
+        return securityUser.getCurrentUserId();
+    }
+
 }
