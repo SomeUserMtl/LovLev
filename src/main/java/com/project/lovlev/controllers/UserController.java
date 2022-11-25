@@ -1,7 +1,6 @@
 package com.project.lovlev.controllers;
 
 import com.project.lovlev.services.IAuthenticationFacade;
-import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
 import com.project.lovlev.services.CustomValidators;
@@ -9,7 +8,6 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
