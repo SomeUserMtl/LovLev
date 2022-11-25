@@ -3,18 +3,24 @@ package com.project.lovlev.configs;
 import com.project.lovlev.services.JpaUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+//@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JpaUserDetailService jpaUserDetailService;
@@ -38,14 +44,30 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((authorize) -> authorize
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .antMatchers("/admin/**").hasRole("ADMIN")
+                                .antMatchers("/user/**").hasRole("USER")
+                                .antMatchers("/register/**").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .userDetailsService(jpaUserDetailService)
+                .csrf(AbstractHttpConfigurer::disable)
+                .logout(logout -> logout.logoutSuccessUrl("/"))
                 .build();
+//        return http
+//                .csrf().disable()
+//                .authorizeRequests((authorize) -> authorize
+////                        .antMatchers(HttpMethod.GET,"/admin/users/**").authenticated()
+//                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
+////                .userDetailsService(jpaUserDetailService)
+//                .build();
     }
 
     @Bean
@@ -55,5 +77,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
+    // Get principal
+    @Bean
+    public Optional<Authentication> getAuthentication() {
+        System.out.println("getAuthentication: " + SecurityContextHolder.getContext().getAuthentication());
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+    }
 }
