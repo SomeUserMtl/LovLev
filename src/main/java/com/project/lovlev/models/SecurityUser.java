@@ -30,10 +30,13 @@ public class SecurityUser implements UserDetails {
 
     // return true if user has role
     public Boolean hasRole(String role){
-        return getAuthorities()
+        Boolean result = getAuthorities()
                 .stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(role::equals);
+                .map(Object::toString)
+                .anyMatch(s -> s.equals(role));
+
+        System.out.println("hasRole: " + result);
+        return result;
     }
 
     @Override
