@@ -28,6 +28,14 @@ public class SecurityUser implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    // return true if user has role
+    public Boolean hasRole(String role){
+        return getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role::equals);
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();
