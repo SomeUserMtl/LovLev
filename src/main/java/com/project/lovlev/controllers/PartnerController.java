@@ -5,6 +5,7 @@ import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.PartnerRepository;
 import com.project.lovlev.repositories.UserRepository;
+import com.project.lovlev.services.IAuthenticationFacade;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Data
 @RestController
@@ -20,10 +20,14 @@ public class PartnerController {
     PartnerRepository partnerRepository;
     UserRepository userRepository;
 
+    IAuthenticationFacade authentication;
+
     public PartnerController(PartnerRepository partnerRepository,
-                             UserRepository userRepository) {
+                             UserRepository userRepository,
+                             IAuthenticationFacade authentication) {
         this.partnerRepository = partnerRepository;
         this.userRepository = userRepository;
+        this.authentication = authentication;
     }
 
     // Get partner by partnerId
@@ -43,17 +47,17 @@ public class PartnerController {
 //                -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 //    }
 
-    //authorize both role_admin and role_user
-//    @GetMapping("partners")
-//    public ResponseEntity<Iterable<Partner>> findAllPartners(Authentication authentication) {
-//
-//        SecurityUser userPrincipal = (SecurityUser) authentication.getPrincipal();
-//        Iterable<Partner> partners = partnerRepository.findAll(userPrincipal.getCurrentUserId());
-//        return new ResponseEntity<>(partners, HttpStatus.OK);
-//    }
+//    authorize both role_admin and role_user
+    @GetMapping("/user/partners")
+    public ResponseEntity<Iterable<Partner>> findAllPartners() {
 
-    // Add a new partner
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+        Iterable<Partner> partners = partnerRepository.
+                getAllPartnersByUserId(authentication.getUserId());
+        return new ResponseEntity<>(partners, HttpStatus.OK);
+    }
+
+
+    // Create partner
     @PostMapping(path = "/user/partner",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

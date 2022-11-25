@@ -62,4 +62,19 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+//    //update user
+//    @PutMapping(path = "/user/update",
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//        public ResponseEntity<User> updateUser(@RequestBody @Valid User updatedUser){
+//
+////      only ROLE_ADMIN can modify roles
+//        if(authentication.returnRole("ROLE_ADMIN"))
+//            updatedUser.setRoles(authentication.getAuthentication().getAuthorities().toString()); // test
+//
+//        updatedUser.setId(authentication.getUserId());
+//        userRepository.save(updatedUser);
+//        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+//    }
 }

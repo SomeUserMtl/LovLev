@@ -29,11 +29,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .antMatchers("/admin/users**").hasRole("ADMIN")
-                                .antMatchers("/user/update**").hasAnyRole("'ROLE_USER', 'ROLE_ADMIN'")
+                                .antMatchers("/admin/users/delete**").hasRole("ADMIN")
+                                .antMatchers("/user/update**").hasAnyRole("ADMIN","USER")
+                                .antMatchers("/user/partners**").hasAnyRole("ADMIN","USER")
                                 .antMatchers("/user/register**").permitAll()
-                                .antMatchers("/user/delete**").permitAll()
-                                .antMatchers("/user/partner**").permitAll()
-                                .antMatchers("/admin/users/delete**").permitAll()
+                                .antMatchers("/user/delete**").hasAnyRole("ADMIN","USER")
+                                .antMatchers("/user/partner**").hasAnyRole("ADMIN","USER")
                                 .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
