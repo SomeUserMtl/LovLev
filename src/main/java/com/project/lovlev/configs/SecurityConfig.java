@@ -40,10 +40,8 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests(auth -> auth
-//                        .mvcMatchers("/partners/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests((authorize) -> authorize
+                        .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .userDetailsService(jpaUserDetailService)
@@ -57,8 +55,5 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
-//        return new SecurityEvaluationContextExtension();
-//    }
+
 }
