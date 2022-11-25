@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Data
 @RestController
-//@EnableMethodSecurity
 public class AdminController {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
@@ -49,11 +50,11 @@ public class AdminController {
     }
 
     //delete multiple users
-    //not active
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/admin/users")
-    public ResponseEntity<User> deleteAll(@RequestParam Long[] id) {
-        userRepository.deleteAllByIdIn(List.of(id));
+
+
+    @DeleteMapping("/admin/users/delete")
+    public ResponseEntity<Iterable<User>> deleteUsers(@RequestParam Long[] ids) {
+        userRepository.deleteAllByIdIn(Arrays.asList(ids));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
