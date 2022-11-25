@@ -1,4 +1,4 @@
-package com.project.lovlev.controllers;
+package com.project.lovlev.models;
 
 public class Roles {
 
