@@ -46,7 +46,6 @@ public class UserController {
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         User user = userRepository.save(newUser);
-//        userRepository.deleteUserById(newUser.getId());
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 }
