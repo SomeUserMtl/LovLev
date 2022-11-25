@@ -39,7 +39,6 @@ public class User{
     @Pattern(regexp = "^[a-zA-Z0-9]{3,15}$", message = "Username can only contain letters, numbers and must be between 4-8 characters")
     @Column(name = "username",unique = true)
     private String username;
-
     @Column(name = "password")
     private String password;
 
@@ -52,6 +51,16 @@ public class User{
     private Sex sex;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
     private Set<Partner> partners = new HashSet<>();
+
+    //remove partner
+    public void removePartner(Partner partner){
+        partners.remove(partner);
+    }
+
+    public void addPartner(Partner newPartner) {
+        partners.add(newPartner);
+    }
 }

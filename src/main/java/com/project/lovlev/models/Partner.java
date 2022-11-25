@@ -59,8 +59,6 @@ public class Partner{
     @Enumerated(EnumType.ORDINAL)
     private Sex sex;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private User user;
-
-
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    private Long user;
 }
