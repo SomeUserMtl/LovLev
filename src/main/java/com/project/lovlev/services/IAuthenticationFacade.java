@@ -1,4 +1,4 @@
-package com.project.lovlev.configs;
+package com.project.lovlev.services;
 
 import org.springframework.security.core.Authentication;
 

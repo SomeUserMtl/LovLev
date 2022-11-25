@@ -1,6 +1,6 @@
 package com.project.lovlev.controllers;
 
-import com.project.lovlev.configs.IAuthenticationFacade;
+import com.project.lovlev.services.IAuthenticationFacade;
 import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;

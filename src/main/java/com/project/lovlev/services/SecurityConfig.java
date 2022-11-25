@@ -1,4 +1,4 @@
-package com.project.lovlev.configs;
+package com.project.lovlev.services;
 
 import com.project.lovlev.services.JpaUserDetailService;
 import org.springframework.context.annotation.Bean;
