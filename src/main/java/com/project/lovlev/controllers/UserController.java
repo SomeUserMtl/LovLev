@@ -38,7 +38,7 @@ public class UserController {
     public ResponseEntity<User> register(@RequestBody @Valid User newUser) {
 
         // only ROLE_ADMIN can create roles, default is ROLE_USER
-        if(!authentication.returnRole("ROLE_ADMIN"))
+        if(authentication.returnRole("ROLE_ADMIN"))
             newUser.setRoles("ROLE_USER");
 
         // validate password before encoding
@@ -55,7 +55,7 @@ public class UserController {
 
         // Evaluate if user has permission for this action
         if(!Objects.equals(authentication.getUserId(), id)
-                && !authentication.returnRole("ROLE_ADMIN"))
+                && authentication.returnRole("ROLE_ADMIN"))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         userRepository.deleteUserById(id);
