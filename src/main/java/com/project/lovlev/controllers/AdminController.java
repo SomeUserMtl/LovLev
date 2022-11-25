@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Data
 @RestController
-@EnableMethodSecurity
+//@EnableMethodSecurity
 public class AdminController {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
@@ -30,7 +30,7 @@ public class AdminController {
     }
 
     // Get user by id
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/user")
     public ResponseEntity<User> getById(@RequestParam Long id) {
         Optional<User> user = Optional
@@ -41,7 +41,7 @@ public class AdminController {
     }
 
     // Get all users
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/users")
     public ResponseEntity<Iterable<User>> getAllUsers() {
         Iterable<User> users = userRepository.findAll();
@@ -50,7 +50,7 @@ public class AdminController {
 
     //delete multiple users
     //not active
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/users")
     public ResponseEntity<User> deleteAll(@RequestParam Long[] id) {
         userRepository.deleteAllByIdIn(List.of(id));

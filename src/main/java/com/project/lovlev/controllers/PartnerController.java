@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Data
 @RestController
-@EnableMethodSecurity
+//@EnableMethodSecurity
 public class PartnerController {
     PartnerRepository partnerRepository;
     UserRepository userRepository;
@@ -30,7 +30,7 @@ public class PartnerController {
     }
 
     // Get partner by partnerId
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "partner")
     public ResponseEntity<Partner> getById(@RequestParam Long id, Authentication authentication) {
 
@@ -47,7 +47,7 @@ public class PartnerController {
     }
 
     //authorize both role_admin and role_user
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("partners")
     public ResponseEntity<Iterable<Partner>> findAllPartners(Authentication authentication) {
 
@@ -57,7 +57,7 @@ public class PartnerController {
     }
 
     // Add a new partner
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping(path = "partner",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
