@@ -1,9 +1,10 @@
-package com.project.lovlev.services;
+package com.project.lovlev.configs;
 
 import com.project.lovlev.services.JpaUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,7 +17,6 @@ import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JpaUserDetailService jpaUserDetailService;
@@ -32,8 +32,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .antMatchers("/admin/**").hasRole("ROLE_ADMIN")
-                                .antMatchers("/user/**").hasAnyRole("'ROLE_USER', 'ROLE_ADMIN'")
-                                .antMatchers("/register/**").permitAll()
+                                .antMatchers("/user/update**").hasAnyRole("'ROLE_USER', 'ROLE_ADMIN'")
+                                .antMatchers("/user/register**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
