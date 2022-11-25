@@ -1,5 +1,6 @@
 package com.project.lovlev.controllers;
 
+import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
 import com.project.lovlev.services.CustomValidators;
@@ -7,8 +8,10 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -30,11 +33,24 @@ public class UserController {
     }
 
     // Create user
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @Secured("ROLE_ADMIN")
     @PostMapping(path = "user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> save(@RequestBody @Valid User newUser) throws Exception {
+    public ResponseEntity<User> save(@RequestBody @Valid User newUser,
+                                     Authentication authentication) throws Exception {
+
+        SecurityUser userPrincipal = (SecurityUser) authentication.getPrincipal();
+
+        // ugly solution to disallow non-admins from adding roles
+        if (newUser.getRoles() != null && userPrincipal
+                .getAuthorities()
+                .stream()
+                .map(Object::toString)
+                .noneMatch(s -> s.contains("ROLE_ADMIN"))) {
+            throw new IllegalArgumentException("You are not authorized to add roles");
+        }
 
         customValidators.validatePassword(newUser.getPassword());
 

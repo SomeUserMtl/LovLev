@@ -61,4 +61,6 @@ public class Partner{
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
+
+
 }

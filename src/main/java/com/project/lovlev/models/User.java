@@ -5,6 +5,7 @@ import com.project.lovlev.enums.Sex;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -12,8 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EnableMethodSecurity
 @Entity(name = "users")
-public class User {
+public class User{
     @Null(message = "id must be null")
     @Id
     @Column(name = "id")
@@ -56,10 +58,4 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Partner> partners = new HashSet<>();
-
-    // Only allow admin to set roles
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
 }
