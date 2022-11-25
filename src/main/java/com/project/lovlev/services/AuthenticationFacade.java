@@ -16,11 +16,12 @@ public class AuthenticationFacade implements IAuthenticationFacade {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public List<String> returnRoles(){
+    @Override
+    public boolean returnRole(String role) {
         return getAuthentication()
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .anyMatch(s -> s.equals(role));
     }
 }

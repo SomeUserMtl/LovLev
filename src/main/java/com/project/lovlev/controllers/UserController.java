@@ -39,16 +39,14 @@ public class UserController {
     public ResponseEntity<User> register(@RequestBody @Valid User newUser) {
 
         // only ROLE_ADMIN can create roles, default is ROLE_USER
-        for (String role : authentication.returnRoles()) {
-            if (role.equals("ROLE_USER") || role.equals("ROLE_ANONYMOUS")){
-                newUser.setRoles("ROLE_USER");
-            }
-        }
+        if(!authentication.returnRole("ROLE_ADMIN"))
+            newUser.setRoles("ROLE_USER");
 
         customValidators.validatePassword(newUser.getPassword());
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         User user = userRepository.save(newUser);
+//        userRepository.deleteUserById(newUser.getId());
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 }
