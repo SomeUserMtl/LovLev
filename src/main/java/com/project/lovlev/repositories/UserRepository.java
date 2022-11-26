@@ -24,25 +24,19 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     @Query("SELECT u FROM users u WHERE u.username = :username")
     Optional<User> findUserByUsername(String username) throws UsernameNotFoundException;
 
-    //add user record to user table
+    //create or update user
+    @Modifying
     @Transactional
     User save(User user);
 
     //find all users
     Iterable<User> findAll();
 
-//    //delete user
+    //delete user
     @Transactional
     void deleteUserById(Long id);
-
 
     //delete multiple users
     @Transactional
     void deleteAllByIdIn(Collection<Long> id);
-
-    // update user by id
-//    @Modifying
-//    @Transactional
-//    @Query("UPDATE users u SET u.username = :username, u.password = :password, u.email = :email, u.roles = :role WHERE u.id = :id")
-//    void updateUserById(String username, String password, String email, String role, Long id);
 }

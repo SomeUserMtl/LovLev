@@ -24,6 +24,15 @@ public class AuthenticationFacade implements IAuthenticationFacade {
     }
 
     @Override
+    public String getRolesString() {
+        return getAuthentication()
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .reduce(",", (a, b) -> a + b);
+    }
+
+    @Override
     public Long getUserId() {
         SecurityUser securityUser = (SecurityUser) getAuthentication().getPrincipal();
         return securityUser.getCurrentUserId();

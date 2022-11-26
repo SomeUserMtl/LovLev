@@ -3,6 +3,7 @@ package com.project.lovlev.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.lovlev.enums.Sex;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Data
 @Entity(name = "users")
 public class User{
-    @Null(message = "id must be null")
+//    @Null(message = "id must be null")
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

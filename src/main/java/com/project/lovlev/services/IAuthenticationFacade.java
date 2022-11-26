@@ -6,4 +6,5 @@ public interface IAuthenticationFacade {
     Authentication getAuthentication();
     boolean returnRole(String role);
     Long getUserId();
+    String getRolesString();
 }

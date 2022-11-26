@@ -37,9 +37,11 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> register(@RequestBody @Valid User newUser) {
 
-        // only ROLE_ADMIN can create roles, default is ROLE_USER
-        if(authentication.returnRole("ROLE_ADMIN"))
+        // only ROLE_ADMIN can create roles and IDs, default is ROLE_USER
+        if(authentication.returnRole("ROLE_ADMIN")) {
             newUser.setRoles("ROLE_USER");
+            newUser.setId(null);
+        }
 
         // validate password before encoding
         customValidators.validatePassword(newUser.getPassword());
@@ -63,18 +65,19 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    //update user
-//    @PutMapping(path = "/user/update",
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//        public ResponseEntity<User> updateUser(@RequestBody @Valid User updatedUser){
-//
-////      only ROLE_ADMIN can modify roles
-//        if(authentication.returnRole("ROLE_ADMIN"))
-//            updatedUser.setRoles(authentication.getAuthentication().getAuthorities().toString()); // test
-//
-//        updatedUser.setId(authentication.getUserId());
-//        userRepository.save(updatedUser);
-//        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
-//    }
+    //update user
+    @PutMapping(path = "/user/update",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<User> updateUser(@RequestBody @Valid User updatedUser){
+
+        // only ROLE_ADMIN can modify roles
+        if(authentication.returnRole("ROLE_ADMIN")) {
+            updatedUser.setRoles("ROLE_USER"); // test
+        }
+
+        updatedUser.setId(authentication.getUserId());
+        userRepository.save(updatedUser);
+        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+    }
 }
