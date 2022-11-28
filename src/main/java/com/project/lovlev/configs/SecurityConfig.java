@@ -3,8 +3,8 @@ package com.project.lovlev.configs;
 import com.project.lovlev.services.JpaUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,13 +28,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .antMatchers("/admin/users**").hasRole("ADMIN")
-                                .antMatchers("/admin/users/delete**").hasRole("ADMIN")
-                                .antMatchers("/user/update**").hasAnyRole("ADMIN","USER")
-                                .antMatchers("/user/partners**").hasAnyRole("ADMIN","USER")
-                                .antMatchers("/user/register**").permitAll()
-                                .antMatchers("/user/delete**").hasAnyRole("ADMIN","USER")
-                                .antMatchers("/user/partner**").hasAnyRole("ADMIN","USER")
+                                .antMatchers(HttpMethod.POST, "user**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())

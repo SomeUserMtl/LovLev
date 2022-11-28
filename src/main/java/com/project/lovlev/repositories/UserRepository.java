@@ -1,17 +1,12 @@
 package com.project.lovlev.repositories;
 
-import com.project.lovlev.models.SecurityUser;
 import com.project.lovlev.models.User;
-import com.project.lovlev.services.AuthenticationFacade;
-import com.project.lovlev.services.IAuthenticationFacade;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
-import javax.validation.constraints.Null;
 import java.util.Collection;
 import java.util.Optional;
 

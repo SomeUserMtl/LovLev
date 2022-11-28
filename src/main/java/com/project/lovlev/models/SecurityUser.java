@@ -28,17 +28,6 @@ public class SecurityUser implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-    // return true if user has role
-    public Boolean hasRole(String role){
-        Boolean result = getAuthorities()
-                .stream()
-                .map(Object::toString)
-                .anyMatch(s -> s.equals(role));
-
-        System.out.println("hasRole: " + result);
-        return result;
-    }
-
     @Override
     public String getPassword() {
         return user.getPassword();

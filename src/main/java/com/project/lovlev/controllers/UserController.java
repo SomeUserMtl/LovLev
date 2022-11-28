@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 @Data
 @RestController
@@ -31,15 +33,33 @@ public class UserController {
         this.authentication = authentication;
     }
 
+    // Get user by id
+    @GetMapping("/user")
+    public ResponseEntity<User> getById(@RequestParam Long id) {
+        Optional<User> user = Optional
+                .ofNullable(userRepository.getById(id));
+        return user.map(value
+                -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
+                -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // Get all users
+    @GetMapping("/users")
+    public ResponseEntity<Iterable<User>> getAllUsers() {
+        System.out.println("authentication: " + authentication.getUserId());
+        Iterable<User> users = userRepository.findAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
     // Create user
-    @PostMapping(path = "/user/register",
+    @PostMapping(path = "/user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> register(@RequestBody @Valid User newUser) {
 
         // only ROLE_ADMIN can create roles and IDs, default is ROLE_USER
-        if(authentication.returnRole("ROLE_ADMIN")) {
-            newUser.setRoles("ROLE_USER");
+        if(authentication.returnRole("ROLE_ADMIN") || newUser.getRoles() == null) {
+            newUser.setRoles("USER");
             newUser.setId(null);
         }
 
@@ -51,8 +71,24 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    //update user
+    @PutMapping(path = "/user",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updateUser(@RequestBody @Valid User updatedUser){
+
+        // only ROLE_ADMIN can modify roles
+        if(authentication.returnRole("ROLE_ADMIN")) {
+            updatedUser.setRoles("ROLE_USER"); // test
+        }
+
+        updatedUser.setId(authentication.getUserId());
+        userRepository.save(updatedUser);
+        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+    }
+
     //delete user
-    @DeleteMapping(path = "/user/delete")
+    @DeleteMapping(path = "/user")
     public ResponseEntity<User> deleteUser(@RequestParam Long id) {
 
         // Evaluate if user has permission for this action
@@ -65,19 +101,10 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //update user
-    @PutMapping(path = "/user/update",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<User> updateUser(@RequestBody @Valid User updatedUser){
-
-        // only ROLE_ADMIN can modify roles
-        if(authentication.returnRole("ROLE_ADMIN")) {
-            updatedUser.setRoles("ROLE_USER"); // test
-        }
-
-        updatedUser.setId(authentication.getUserId());
-        userRepository.save(updatedUser);
-        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+    //delete multiple users
+    @DeleteMapping("/users")
+    public ResponseEntity<Iterable<User>> deleteUsers(@RequestParam Long[] ids) {
+        userRepository.deleteAllByIdIn(Arrays.asList(ids));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
