@@ -11,7 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 @RestController
@@ -31,14 +36,42 @@ public class UserController {
         this.authentication = authentication;
     }
 
+    // Get User by userId
+    @GetMapping("/user")
+    public ResponseEntity<User> getById(@RequestParam Long id) {
+
+        if(authentication.returnRole("ROLE_ADMIN") || Objects.equals(authentication.getUserId(), id)) {
+            Optional<User> user = Optional
+                    .ofNullable(userRepository.getById(id));
+            return user.map(value
+                    -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
+                    -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    // Get all users
+    @GetMapping("/users")
+    public ResponseEntity<Iterable<User>> getAllUsers() {
+        if(authentication.returnRole("ROLE_ADMIN")) {
+            Iterable<User> users = userRepository.findAll();
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     // Create user
-    @PostMapping(path = "/user/register",
+    @PostMapping(path = "/user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> register(@RequestBody @Valid User newUser) {
 
         // only ROLE_ADMIN can create roles and IDs, default is ROLE_USER
-        if(authentication.returnRole("ROLE_ADMIN")) {
+        if(!authentication.returnRole("ROLE_ADMIN")) {
             newUser.setRoles("ROLE_USER");
             newUser.setId(null);
         }
@@ -52,8 +85,8 @@ public class UserController {
     }
 
     //delete user
-    @DeleteMapping(path = "/user/delete")
-    public ResponseEntity<User> deleteUser(@RequestParam Long id) {
+    @DeleteMapping(path = "/user/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Long id) {
 
         // Evaluate if user has permission for this action
         if(!Objects.equals(authentication.getUserId(), id)
@@ -65,19 +98,56 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Delete multiple users
+    @DeleteMapping("/users")
+    public ResponseEntity<Iterable<User>> deleteUsers(@RequestParam Long[] ids) {
+        if (authentication.returnRole("ROLE_ADMIN")){
+            userRepository.deleteAllByIdIn(Arrays.asList(ids));
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     //update user
-    @PutMapping(path = "/user/update",
+    @PutMapping(path = "/user/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<User> updateUser(@RequestBody @Valid User updatedUser){
+        public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Valid User updatedUser){
 
-        // only ROLE_ADMIN can modify roles
-        if(authentication.returnRole("ROLE_ADMIN")) {
-            updatedUser.setRoles("ROLE_USER"); // test
+        User user = userRepository.getById(id);
+        if (authentication.returnRole("ROLE_ADMIN") || Objects.equals(authentication.getUserId(), id)) {
+
+            // validate password before encoding
+            customValidators.validatePassword(updatedUser.getPassword());
+
+            if(updatedUser.getRoles() != null) {
+                if (authentication.returnRole("ROLE_ADMIN"))
+                    user.setRoles(updatedUser.getRoles());
+                else
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            if (updatedUser.getFirstName() != null)
+                user.setFirstName(updatedUser.getFirstName());
+            if (updatedUser.getMiddleName() != null)
+                user.setMiddleName(updatedUser.getMiddleName());
+            if (updatedUser.getLastName() != null)
+                user.setLastName(updatedUser.getLastName());
+            if (updatedUser.getEmail() != null)
+                user.setEmail(updatedUser.getEmail());
+            if (updatedUser.getPassword() != null)
+                user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            if (updatedUser.getUsername() != null)
+                user.setUsername(updatedUser.getUsername());
+            if (updatedUser.getSex() != null)
+                user.setSex(updatedUser.getSex());
+
+            userRepository.save(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
-
-        updatedUser.setId(authentication.getUserId());
-        userRepository.save(updatedUser);
-        return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+        else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 }

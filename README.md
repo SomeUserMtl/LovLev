@@ -1,4 +1,4 @@
-# LovLav
+LovLav
 
 The digital diary for your love life.
 

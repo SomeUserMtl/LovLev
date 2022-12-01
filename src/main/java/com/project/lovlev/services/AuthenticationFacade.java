@@ -20,7 +20,7 @@ public class AuthenticationFacade implements IAuthenticationFacade {
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .noneMatch(s -> s.equals(role));
+                .anyMatch(s -> s.equals(role));
     }
 
     @Override

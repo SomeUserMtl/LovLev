@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -40,6 +41,9 @@ public class User{
     @Pattern(regexp = "^[a-zA-Z0-9]{3,15}$", message = "Username can only contain letters, numbers and must be between 4-8 characters")
     @Column(name = "username",unique = true)
     private String username;
+
+    @NotBlank(message = "Password is required")
+    @Pattern(regexp = "^.[^\s]{4,100}", message = "password must be between 4-50 characters, no spaces allowed")
     @Column(name = "password")
     private String password;
 

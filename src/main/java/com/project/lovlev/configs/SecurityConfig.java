@@ -28,13 +28,15 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .antMatchers("/admin/users**").hasRole("ADMIN")
-                                .antMatchers("/admin/users/delete**").hasRole("ADMIN")
-                                .antMatchers("/user/update**").hasAnyRole("ADMIN","USER")
-                                .antMatchers("/user/partners**").hasAnyRole("ADMIN","USER")
-                                .antMatchers("/user/register**").permitAll()
-                                .antMatchers("/user/delete**").hasAnyRole("ADMIN","USER")
-                                .antMatchers("/user/partner**").hasAnyRole("ADMIN","USER")
+//                                .antMatchers("/admin/users**").hasRole("ADMIN")
+//                                .antMatchers("/admin/users/delete**").hasRole("ADMIN")
+//                                .antMatchers("/user/update**").hasAnyRole("ADMIN","USER")
+//                                .antMatchers("/user/partners**").hasAnyRole("ADMIN","USER")
+//                                .antMatchers("/user/register**").permitAll()
+//                                .antMatchers("/user/delete**").hasAnyRole("ADMIN","USER")
+//                                .antMatchers("/user/partner**").hasAnyRole("ADMIN","USER")
+                                .antMatchers("/user").permitAll()
+                                .antMatchers("/users").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
