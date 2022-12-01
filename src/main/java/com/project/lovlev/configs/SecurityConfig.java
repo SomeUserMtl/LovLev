@@ -36,6 +36,8 @@ public class SecurityConfig {
 //                                .antMatchers("/user/partner**").hasAnyRole("ADMIN","USER")
                                 .antMatchers("/user").permitAll()
                                 .antMatchers("/users").permitAll()
+                                .antMatchers("/partner").permitAll()
+                                .antMatchers("/partners").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
