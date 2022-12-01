@@ -1,5 +1,6 @@
 package com.project.lovlev.controllers;
 
+import com.project.lovlev.exceptions.NotFoundException;
 import com.project.lovlev.services.security.IAuthenticationFacade;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
@@ -12,10 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 @Data
 @RestController
@@ -33,19 +32,18 @@ public class UserController {
     }
 
     // Get User by userId
-    @GetMapping("/user")
-    public ResponseEntity<User> getById(@RequestParam Long id) {
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getById(@PathVariable Long id) {
 
-        if(authentication.returnRole("ROLE_ADMIN") || Objects.equals(authentication.getUserId(), id)) {
-            Optional<User> user = Optional
-                    .ofNullable(userRepository.getById(id));
-            return user.map(value
-                    -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
-                    -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if(authentication.returnRole("ROLE_ADMIN")
+                || Objects.equals(authentication.getUserId(), id)) {
+            return
+                    userRepository.getById(id)
+                            .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
-        else {
+        else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     // Get all users
@@ -55,24 +53,27 @@ public class UserController {
             Iterable<User> users = userRepository.findAll();
             return new ResponseEntity<>(users, HttpStatus.OK);
         }
-        else {
+        else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     // Create user
     @PostMapping(path = "/user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> register(@RequestBody @Validated(UserPost.class) User newUser) {
+    public ResponseEntity<User> create(@RequestBody @Validated(UserPost.class) User newUser) {
 
-        // only ROLE_ADMIN can create roles and IDs, default is ROLE_USER
-        if(!authentication.returnRole("ROLE_ADMIN"))
+        // only ROLE_ADMIN can create roles, default is ROLE_USER
+        if(!authentication.returnRole("ROLE_ADMIN")) {
+            if (newUser.getRoles() != null)
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             newUser.setRoles("ROLE_USER");
+        }
 
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         User user = userRepository.save(newUser);
+
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
@@ -81,13 +82,13 @@ public class UserController {
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
 
         // Evaluate if user has permission for this action
-        if(!Objects.equals(authentication.getUserId(), id)
-                && authentication.returnRole("ROLE_ADMIN"))
+        if(Objects.equals(authentication.getUserId(), id)
+                || authentication.returnRole("ROLE_ADMIN")) {
+            userRepository.deleteUserById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
-        userRepository.deleteUserById(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // Delete multiple users
@@ -97,9 +98,8 @@ public class UserController {
             userRepository.deleteAllByIdIn(Arrays.asList(ids));
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        else {
+        else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     //update user
@@ -108,8 +108,12 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Validated(UserPut.class) User updatedUser){
 
-        User user = userRepository.getById(id);
-        if (authentication.returnRole("ROLE_ADMIN") || Objects.equals(authentication.getUserId(), id)) {
+        if (authentication.returnRole("ROLE_ADMIN")
+                || Objects.equals(authentication.getUserId(), id)) {
+
+            User user = userRepository
+                    .getById(id)
+                    .orElseThrow(() -> new NotFoundException("User not found with id " + id));
 
             if(updatedUser.getRoles() != null) {
                 if (authentication.returnRole("ROLE_ADMIN"))

@@ -56,11 +56,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(RollbackException.class)
-//    public ResponseEntity<String> handleValidationErrors(RollbackException ex) {
-//        String error = ex.getMessage();
-//        return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleValidationErrors(NotFoundException ex) {
+        String error = ex.getMessage();
+        return new ResponseEntity<>("Error: " + error, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();

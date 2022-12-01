@@ -1,4 +1,4 @@
-package com.project.lovlev.services;
+package com.project.lovlev.services.security;
 
 import com.project.lovlev.services.security.SecurityUser;
 import com.project.lovlev.repositories.UserRepository;

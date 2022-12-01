@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
     //get by id
-    User getById(Long id);
+    Optional<User> getById(Long id);
 
     //find by username
     @Query("SELECT u FROM users u WHERE u.username = :username")

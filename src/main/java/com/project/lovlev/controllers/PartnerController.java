@@ -1,7 +1,7 @@
 package com.project.lovlev.controllers;
 
+import com.project.lovlev.exceptions.NotFoundException;
 import com.project.lovlev.models.Partner;
-import com.project.lovlev.services.security.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.PartnerRepository;
 import com.project.lovlev.repositories.UserRepository;
@@ -10,7 +10,6 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
@@ -61,10 +60,10 @@ public class PartnerController {
     @PostMapping(path = "/user/partner",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Partner> addPartner(@RequestBody @Valid Partner newPartner,
-                                              Authentication authentication) {
-        SecurityUser userPrincipal = (SecurityUser) authentication.getPrincipal();
-        User user = userRepository.getById(userPrincipal.getCurrentUserId());
+    public ResponseEntity<Partner> addPartner(@RequestBody @Valid Partner newPartner) {
+        User user = userRepository
+                .getById(authentication.getUserId())
+                .orElseThrow(() -> new NotFoundException("Partner not found with id " + authentication.getUserId()));
         user.addPartner(newPartner);
         userRepository.save(user);
 //        Partner partner = partnerRepository.save(newPartner);
