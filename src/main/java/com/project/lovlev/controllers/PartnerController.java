@@ -5,9 +5,8 @@ import com.project.lovlev.models.Partner;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.PartnerRepository;
 import com.project.lovlev.repositories.UserRepository;
-import com.project.lovlev.services.security.IAuthenticationFacade;
+import com.project.lovlev.services.security.IAuthenticationAccess;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,11 @@ import java.util.*;
 public class PartnerController {
     PartnerRepository partnerRepository;
     UserRepository userRepository;
-    IAuthenticationFacade authentication;
+    IAuthenticationAccess authentication;
 
     public PartnerController(PartnerRepository partnerRepository,
                              UserRepository userRepository,
-                             IAuthenticationFacade authentication) {
+                             IAuthenticationAccess authentication) {
         this.partnerRepository = partnerRepository;
         this.userRepository = userRepository;
         this.authentication = authentication;
@@ -67,10 +66,10 @@ public class PartnerController {
 
 
     // Create partner
-    @PostMapping(path = "/user/partner",
+    @PostMapping(path = "/partner",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Partner> addPartner(@RequestBody @Valid Partner newPartner) {
+    public ResponseEntity<Partner> create(@RequestBody @Valid Partner newPartner) {
         User user = userRepository
                 .getById(authentication.getUserId())
                 .orElseThrow(() -> new NotFoundException("Partner not found with id " + authentication.getUserId()));

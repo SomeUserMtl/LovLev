@@ -1,7 +1,7 @@
 package com.project.lovlev.controllers;
 
 import com.project.lovlev.exceptions.NotFoundException;
-import com.project.lovlev.services.security.IAuthenticationFacade;
+import com.project.lovlev.services.security.IAuthenticationAccess;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
 import com.project.lovlev.services.validation.UserPost;
@@ -21,11 +21,11 @@ import java.util.Objects;
 public class UserController {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
-    IAuthenticationFacade authentication;
+    IAuthenticationAccess authentication;
 
     public UserController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          IAuthenticationFacade authentication) {
+                          IAuthenticationAccess authentication) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authentication = authentication;
@@ -37,10 +37,9 @@ public class UserController {
 
         if(authentication.returnRole("ROLE_ADMIN")
                 || Objects.equals(authentication.getUserId(), id)) {
-            return
-                    userRepository.getById(id)
-                            .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            return userRepository.getById(id)
+                    .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
         else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -49,7 +48,7 @@ public class UserController {
     // Get all users
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> getAllUsers() {
-        if(authentication.returnRole("ROLE_ADMIN")) {
+        if (authentication.returnRole("ROLE_ADMIN")) {
             Iterable<User> users = userRepository.findAll();
             return new ResponseEntity<>(users, HttpStatus.OK);
         }
@@ -71,7 +70,6 @@ public class UserController {
         }
 
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-
         User user = userRepository.save(newUser);
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
@@ -111,9 +109,8 @@ public class UserController {
         if (authentication.returnRole("ROLE_ADMIN")
                 || Objects.equals(authentication.getUserId(), id)) {
 
-            User user = userRepository
-                    .getById(id)
-                    .orElseThrow(() -> new NotFoundException("User not found with id " + id));
+            User user = userRepository.getById(id).orElseThrow(()
+                    -> new NotFoundException("User not found with id " + id));
 
             if(updatedUser.getRoles() != null) {
                 if (authentication.returnRole("ROLE_ADMIN"))
