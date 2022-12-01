@@ -7,11 +7,13 @@ import com.project.lovlev.repositories.PartnerRepository;
 import com.project.lovlev.repositories.UserRepository;
 import com.project.lovlev.services.security.IAuthenticationFacade;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.*;
 
 @Data
 @RestController
@@ -47,12 +49,20 @@ public class PartnerController {
     }
 
     // Get all partners
-    @GetMapping("/partners")
-    public ResponseEntity<Iterable<Partner>> findAllPartners() {
+    @GetMapping("/partners/{userid}")
+    public ResponseEntity<Set<Partner>> findAllPartners(@PathVariable(required = false) Optional<Long> userid) {
 
-        Iterable<Partner> partners = partnerRepository.
-                getAllPartnersByUserId(authentication.getUserId());
-        return new ResponseEntity<>(partners, HttpStatus.OK);
+        if (authentication.returnRole("ROLE_ADMIN")) {
+            return userid.map(aLong
+                    -> new ResponseEntity<>(userRepository.getById(aLong).orElseThrow(()
+                    -> new NotFoundException("User not found")).getPartners(), HttpStatus.OK)).orElseGet(()
+                    -> new ResponseEntity<>(partnerRepository.findAll(), HttpStatus.OK));
+        }
+        else if (userid.isPresent() && userid.get().equals(authentication.getUserId())) {
+            return new ResponseEntity<>(userRepository.getById(userid.get()).orElseThrow(()
+                    -> new NotFoundException("User not found")).getPartners(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 

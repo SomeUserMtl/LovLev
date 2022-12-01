@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface PartnerRepository extends CrudRepository<Partner, Integer> {
@@ -17,6 +18,9 @@ public interface PartnerRepository extends CrudRepository<Partner, Integer> {
 
     //get partner by id
     Optional<Partner> getById(Long id);
+
+    //findall
+    Set<Partner> findAll();
 
     //get partner using id
 //    @Query("SELECT p FROM partner p WHERE p.id = :id AND p.user.id = :userId")
