@@ -1,38 +1,34 @@
 package com.project.lovlev.controllers;
 
-import com.project.lovlev.services.IAuthenticationFacade;
+import com.project.lovlev.services.security.IAuthenticationFacade;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.UserRepository;
-import com.project.lovlev.services.CustomValidators;
+import com.project.lovlev.services.validation.UserPost;
+import com.project.lovlev.services.validation.UserPut;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
+
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Data
 @RestController
 public class UserController {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
-    CustomValidators customValidators;
     IAuthenticationFacade authentication;
 
     public UserController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          CustomValidators customValidators,
                           IAuthenticationFacade authentication) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.customValidators = customValidators;
         this.authentication = authentication;
     }
 
@@ -68,16 +64,12 @@ public class UserController {
     @PostMapping(path = "/user",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> register(@RequestBody @Valid User newUser) {
+    public ResponseEntity<User> register(@RequestBody @Validated(UserPost.class) User newUser) {
 
         // only ROLE_ADMIN can create roles and IDs, default is ROLE_USER
-        if(!authentication.returnRole("ROLE_ADMIN")) {
+        if(!authentication.returnRole("ROLE_ADMIN"))
             newUser.setRoles("ROLE_USER");
-            newUser.setId(null);
-        }
 
-        // validate password before encoding
-        customValidators.validatePassword(newUser.getPassword());
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
         User user = userRepository.save(newUser);
@@ -114,13 +106,10 @@ public class UserController {
     @PutMapping(path = "/user/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Valid User updatedUser){
+        public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Validated(UserPut.class) User updatedUser){
 
         User user = userRepository.getById(id);
         if (authentication.returnRole("ROLE_ADMIN") || Objects.equals(authentication.getUserId(), id)) {
-
-            // validate password before encoding
-            customValidators.validatePassword(updatedUser.getPassword());
 
             if(updatedUser.getRoles() != null) {
                 if (authentication.returnRole("ROLE_ADMIN"))

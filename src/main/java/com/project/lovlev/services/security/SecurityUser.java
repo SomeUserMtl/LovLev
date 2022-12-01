@@ -1,5 +1,6 @@
-package com.project.lovlev.models;
+package com.project.lovlev.services.security;
 
+import com.project.lovlev.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,5 @@
-package com.project.lovlev.services;
+package com.project.lovlev.services.security;
 
-import com.project.lovlev.models.SecurityUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

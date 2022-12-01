@@ -1,11 +1,11 @@
 package com.project.lovlev.controllers;
 
 import com.project.lovlev.models.Partner;
-import com.project.lovlev.models.SecurityUser;
+import com.project.lovlev.services.security.SecurityUser;
 import com.project.lovlev.models.User;
 import com.project.lovlev.repositories.PartnerRepository;
 import com.project.lovlev.repositories.UserRepository;
-import com.project.lovlev.services.IAuthenticationFacade;
+import com.project.lovlev.services.security.IAuthenticationFacade;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

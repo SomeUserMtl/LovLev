@@ -1,8 +1,7 @@
 package com.project.lovlev.services;
 
-import com.project.lovlev.models.SecurityUser;
+import com.project.lovlev.services.security.SecurityUser;
 import com.project.lovlev.repositories.UserRepository;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
