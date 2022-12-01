@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PartnerRepository extends CrudRepository<Partner, Integer> {
@@ -15,7 +16,7 @@ public interface PartnerRepository extends CrudRepository<Partner, Integer> {
     List<Partner> getAllPartnersByUserId(Long id);
 
     //get partner by id
-    Partner getById(Integer id);
+    Optional<Partner> getById(Long id);
 
     //get partner using id
 //    @Query("SELECT p FROM partner p WHERE p.id = :id AND p.user.id = :userId")

@@ -18,7 +18,6 @@ import javax.validation.Valid;
 public class PartnerController {
     PartnerRepository partnerRepository;
     UserRepository userRepository;
-
     IAuthenticationFacade authentication;
 
     public PartnerController(PartnerRepository partnerRepository,
@@ -30,24 +29,25 @@ public class PartnerController {
     }
 
     // Get partner by partnerId
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-//    @GetMapping(value = "partner")
-//    public ResponseEntity<Partner> getById(@RequestParam Long id, Authentication authentication) {
-//
-//        SecurityUser userPrincipal = (SecurityUser) authentication.getPrincipal();
-//
-//
-//        Optional<Partner> partner = Optional
-//                        .ofNullable(partnerRepository
-//                        .getByIdAndUser(id,userPrincipal.getCurrentUserId()));
-//
-//        return partner.map(value
-//                -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(()
-//                -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-//    }
+    @GetMapping(value = "/partner/{id}")
+    public ResponseEntity<Partner> getById(@PathVariable Long id) {
 
-//    authorize both role_admin and role_user
-    @GetMapping("/user/partners")
+        User user = userRepository.getById(authentication.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (authentication.returnRole("ROLE_ADMIN") || user
+                .getPartners()
+                .stream()
+                .anyMatch(partner -> partner.getId().equals(id)))
+            return partnerRepository
+                    .getById(id)
+                    .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    // Get all partners
+    @GetMapping("/partners")
     public ResponseEntity<Iterable<Partner>> findAllPartners() {
 
         Iterable<Partner> partners = partnerRepository.
